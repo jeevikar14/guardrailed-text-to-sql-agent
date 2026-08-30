@@ -1,0 +1,128 @@
+# =========================================================
+# policies.yaml
+#
+# Deterministic table/column access policy.
+# Read by app.guards.policy_guard and app.guards.pii_guard.
+#
+# Rules:
+#   - A table not listed here is treated as NOT allowed
+#     (default-deny, not default-allow).
+#   - A column not listed under an allowed table is treated
+#     as NOT allowed (default-deny).
+#   - "sensitivity" is informational metadata surfaced in
+#     audit logs and blocked-query explanations; it does not
+#     itself grant or revoke access — "allowed" does that.
+# =========================================================
+
+tables:
+
+  customers:
+    allowed: true
+    columns:
+      id:
+        allowed: true
+      name:
+        allowed: true
+      email:
+        allowed: false
+        sensitivity: PII
+      phone:
+        allowed: false
+        sensitivity: PII
+      region:
+        allowed: true
+      signup_date:
+        allowed: true
+
+  products:
+    allowed: true
+    columns:
+      id:
+        allowed: true
+      name:
+        allowed: true
+      category:
+        allowed: true
+      price:
+        allowed: true
+      cost:
+        allowed: false
+        sensitivity: CONFIDENTIAL
+      in_stock:
+        allowed: true
+
+  orders:
+    allowed: true
+    columns:
+      id:
+        allowed: true
+      customer_id:
+        allowed: true
+      order_date:
+        allowed: true
+      status:
+        allowed: true
+
+  order_items:
+    allowed: true
+    columns:
+      id:
+        allowed: true
+      order_id:
+        allowed: true
+      product_id:
+        allowed: true
+      quantity:
+        allowed: true
+      unit_price:
+        allowed: true
+
+  employees:
+    allowed: true
+    columns:
+      id:
+        allowed: true
+      name:
+        allowed: true
+      department:
+        allowed: true
+      role:
+        allowed: true
+      salary:
+        allowed: false
+        sensitivity: CONFIDENTIAL
+      hire_date:
+        allowed: true
+
+# =========================================================
+# Dangerous / disallowed PostgreSQL functions.
+# Read by app.guards.function_guard. Configurable, not
+# an exhaustive denylist — extend as needed.
+# =========================================================
+denied_functions:
+  # Filesystem / server access
+  - pg_read_file
+  - pg_read_binary_file
+  - pg_ls_dir
+  - lo_import
+  - lo_export
+  - copy
+
+  # Network access
+  - dblink
+  - dblink_connect
+
+  # Privilege / config manipulation
+  - set_config
+  - pg_reload_conf
+  - pg_terminate_backend
+  - pg_cancel_backend
+
+  # Arbitrary code execution paths
+  - pg_execute_server_program
+
+sensitivity_categories:
+  - PII
+  - CONFIDENTIAL
+  - FINANCIAL
+  - SECURITY_SENSITIVE

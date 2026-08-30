@@ -1,0 +1,337 @@
+{
+  "tables": [
+    {
+      "name": "customers",
+      "description": "Customer records. email and phone are PII and must not be exposed via NL queries.",
+      "allowed": true,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "email",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": false,
+          "sensitivity": "PII",
+          "description": null
+        },
+        {
+          "name": "phone",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": true,
+          "allowed": false,
+          "sensitivity": "PII",
+          "description": null
+        },
+        {
+          "name": "region",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "signup_date",
+          "data_type": "date",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        }
+      ],
+      "foreign_keys": [],
+      "row_count_estimate": 30
+    },
+    {
+      "name": "employees",
+      "description": "Internal employee records. salary is confidential.",
+      "allowed": true,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "department",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "role",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "salary",
+          "data_type": "numeric",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": false,
+          "sensitivity": "CONFIDENTIAL",
+          "description": null
+        },
+        {
+          "name": "hire_date",
+          "data_type": "date",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        }
+      ],
+      "foreign_keys": [],
+      "row_count_estimate": 15
+    },
+    {
+      "name": "order_items",
+      "description": "Line items per order, links orders to products.",
+      "allowed": true,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "order_id",
+          "data_type": "integer",
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "product_id",
+          "data_type": "integer",
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "quantity",
+          "data_type": "integer",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "unit_price",
+          "data_type": "numeric",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "order_id",
+          "references_table": "orders",
+          "references_column": "id"
+        },
+        {
+          "column": "product_id",
+          "references_table": "products",
+          "references_column": "id"
+        }
+      ],
+      "row_count_estimate": 540
+    },
+    {
+      "name": "orders",
+      "description": "Customer orders, one row per order.",
+      "allowed": true,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "customer_id",
+          "data_type": "integer",
+          "is_primary_key": false,
+          "is_foreign_key": true,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "order_date",
+          "data_type": "date",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "status",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "customer_id",
+          "references_table": "customers",
+          "references_column": "id"
+        }
+      ],
+      "row_count_estimate": 180
+    },
+    {
+      "name": "products",
+      "description": "Product catalog. cost is confidential margin data.",
+      "allowed": true,
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "integer",
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "name",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "category",
+          "data_type": "character varying",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "price",
+          "data_type": "numeric",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        },
+        {
+          "name": "cost",
+          "data_type": "numeric",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": false,
+          "sensitivity": "CONFIDENTIAL",
+          "description": null
+        },
+        {
+          "name": "in_stock",
+          "data_type": "integer",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "nullable": false,
+          "allowed": true,
+          "sensitivity": null,
+          "description": null
+        }
+      ],
+      "foreign_keys": [],
+      "row_count_estimate": 20
+    }
+  ],
+  "generated_at": "2026-08-30T07:51:53.292617+00:00"
+}

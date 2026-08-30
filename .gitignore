@@ -1,0 +1,26 @@
+# Environment
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+*.log
+
+# Vector store data (regenerated via scripts/index_schema.py)
+data/chroma/
+
+# Evaluation run outputs
+data/evaluation/results_*.json
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Docker
+*.pid

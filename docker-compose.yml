@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: text2sql-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-text2sql}
+      POSTGRES_USER: ${POSTGRES_USER:-app_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_admin_pw}
+      # Passed through so 03_readonly_user.sql can create the read-only role
+      POSTGRES_READONLY_USER: ${POSTGRES_READONLY_USER:-app_readonly}
+      POSTGRES_READONLY_PASSWORD: ${POSTGRES_READONLY_PASSWORD:-app_readonly_pw}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app_admin} -d ${POSTGRES_DB:-text2sql}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - text2sql-net
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    container_name: text2sql-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app_admin}:${POSTGRES_PASSWORD:-app_admin_pw}@postgres:5432/${POSTGRES_DB:-text2sql}
+      DATABASE_READONLY_URL: postgresql://${POSTGRES_READONLY_USER:-app_readonly}:${POSTGRES_READONLY_PASSWORD:-app_readonly_pw}@postgres:5432/${POSTGRES_DB:-text2sql}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - text2sql-net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
+    container_name: text2sql-frontend
+    restart: unless-stopped
+    environment:
+      BACKEND_API_URL: http://backend:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    networks:
+      - text2sql-net
+
+volumes:
+  pgdata:
+
+networks:
+  text2sql-net:
+    driver: bridge
